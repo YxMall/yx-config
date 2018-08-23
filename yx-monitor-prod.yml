@@ -1,0 +1,29 @@
+server:
+  port: 9003
+
+#集成eureka注册到eureka即可获取服务信息 无需配置了 spring.boot.admin.url  配置了将会出现重复信息显示
+
+#turbine中显示的hystrix信息
+spring:
+  eureka:
+    instance:
+      prefer-ip-address: true
+    client:
+      serviceUrl:
+        defaultZone: http://smile:123456@eureka:1025/eureka
+  boot:
+    admin:
+      turbine:
+        location: yx-monitor #默认在集群中找serviceid为turbine的Instance，如果找不到就会报错，通过spring.boot.admin.turbine.location可以修改这个配置
+      routes:
+        endpoints: env,metrics,trace,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream,turbine.stream
+
+turbine:
+    app-config: pig-gateway #收集监控信息的服务名
+    combine-host-port: true
+    cluster-name-expression: new String('default') #集群名称
+
+#turbine.app-config参数配置Eureka中的serviceId列表，表明监控哪些服务
+#turbine.combine-host-port参数设置为true，可以让同一主机上的服务通过主机名与端口号的组合来进行区分，默认情况下会以host来区分不同的服务，这会使得在本机调试的时候，本机上的不同服务聚合成一个服务来统计。
+#turbine.cluster-name-expression参数指定了集群名称为default，当服务数量非常多的时候，可以启动多个Turbine服务来构建不同的聚合集群，
+#而该参数可以用来区分这些不同的聚合集群，同时该参数值可以再Hystrix仪表盘中用来定位不同的聚合集群，只需在Hystrix Stream的URL中通过cluster参数来指定
