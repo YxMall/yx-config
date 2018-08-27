@@ -1,0 +1,9 @@
+server:
+  port: 9004
+
+
+zuul:
+  routes:
+    test-url:
+      path: /test-url/**
+      serviceId: test-service
